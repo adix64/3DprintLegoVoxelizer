@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\Source\AnthropometrySystem\Main.cpp" />
+    <ClCompile Include="..\Source\AnthropometrySystem\SearchUtils.cpp" />
+    <ClCompile Include="..\Source\AnthropometrySystem\BaseMesh.cpp">
+      <Filter>GPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\GPU\GPUBuffers.cpp">
+      <Filter>GPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\AnthropometrySystem\TextRendering.cpp">
+      <Filter>GUI&amp;Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\GPU\Texture2D.cpp">
+      <Filter>GUI&amp;Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\GPU\CubeMapFBO.cpp">
+      <Filter>GPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\AnthropometrySystem\GUIandInput.cpp">
+      <Filter>GUI&amp;Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui.cpp">
+      <Filter>GUI&amp;Input\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_draw.cpp">
+      <Filter>GUI&amp;Input\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_impl_glfw_gl3.cpp">
+      <Filter>GUI&amp;Input\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Component\CameraInput.cpp">
+      <Filter>GUI&amp;Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Engine.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\World.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Window\WindowObject.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Window\WindowCallbacks.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Window\InputController.cpp">
+      <Filter>GUI&amp;Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\GPU\Shader.cpp">
+      <Filter>GPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\GPU\ShadowCubeMapFBO.cpp">
+      <Filter>GPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Managers\TextureManager.cpp">
+      <Filter>GPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Component\SimpleScene.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Component\SceneInput.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\include\gl.cpp">
+      <Filter>Sys\Libs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\GPU\Mesh.cpp">
+      <Filter>GPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\AnthropometrySystem\MeshVoxelizer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\AnthropometrySystem\RenderingSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\AnthropometrySystem\ColorGenerator.hpp" />
+    <ClInclude Include="..\Source\AnthropometrySystem\DisjointSets.hpp" />
+    <ClInclude Include="..\Source\AnthropometrySystem\Grid.hpp" />
+    <ClInclude Include="..\Source\AnthropometrySystem\Camera.hpp">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GPU\GPUBuffers.h">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\AnthropometrySystem\TextRendering.h">
+      <Filter>GUI&amp;Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GPU\Texture2D.h">
+      <Filter>GUI&amp;Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GPU\CubeMapFBO.h">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\AnthropometrySystem\FullscreenQuad.hpp">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GPU\Framebuffer.hpp">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui.h">
+      <Filter>GUI&amp;Input\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imconfig.h">
+      <Filter>GUI&amp;Input\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui_impl_glfw_gl3.h">
+      <Filter>GUI&amp;Input\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui_setup.h">
+      <Filter>GUI&amp;Input\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui_internal.h">
+      <Filter>GUI&amp;Input\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Component\CameraInput.h">
+      <Filter>GUI&amp;Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\AnthropometrySystem\Gizmo.hpp">
+      <Filter>GUI&amp;Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Engine.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\World.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Window\WindowObject.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Window\WindowCallbacks.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Window\InputController.h">
+      <Filter>GUI&amp;Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\include\utils.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GPU\Shader.h">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GPU\ShadowCubeMapFBO.h">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Managers\TextureManager.h">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GPU\Sprite.hpp">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Component\SimpleScene.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Component\SceneInput.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\include\gl.h">
+      <Filter>Sys\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\include\glm.h">
+      <Filter>Sys\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\include\math.h">
+      <Filter>Sys\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\stb_image.h">
+      <Filter>Sys\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\stb_rect_pack.h">
+      <Filter>Sys\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\stb_textedit.h">
+      <Filter>Sys\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\stb_truetype.h">
+      <Filter>Sys\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GPU\Mesh.h">
+      <Filter>GPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Managers\ResourcePath.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\AnthropometrySystem\MeshVoxelizer.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="GPU">
+      <UniqueIdentifier>{c001ee50-ffac-488a-b045-55daac88f86b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sys">
+      <UniqueIdentifier>{16a529f3-0525-40f9-9116-835b7a69eac5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI&amp;Input">
+      <UniqueIdentifier>{cffed5d1-2046-4177-8804-4ad3b49f7ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI&amp;Input\ImGui">
+      <UniqueIdentifier>{dd45d7b8-21da-4321-9a98-98453090da6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sys\Libs">
+      <UniqueIdentifier>{38b48b4b-1818-4df7-a9fa-dc7fc0861d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{cdccec2c-5ce3-47a0-8379-4aac164f6661}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\libs\imgui\imgui.ini">
+      <Filter>GUI&amp;Input\ImGui</Filter>
+    </None>
+  </ItemGroup>
+</Project>
