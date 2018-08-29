@@ -28,7 +28,7 @@ void MeshVoxelizer::RenderImGUI()
 	ImGui::SetNextWindowSize(ImVec2(200, 400), ImGuiSetCond_FirstUseEver);
 	ImGui::SetNextWindowPos(ImVec2(200, 200), ImGuiSetCond_FirstUseEver);
 	//ImGui::PushStyleColor(ImGuiCol_Border, ImColor(255, 100, 100));
-	ImGui::Begin("", &xt);
+	ImGui::Begin("", &xt,ImVec2(600,600));
 
 	ImGui::Text(crtChr->mName.c_str());
 	
@@ -51,17 +51,36 @@ void MeshVoxelizer::RenderImGUI()
 	if (ImGui::Button("Up"))
 	{
 		crtChr->currentLayer = min(crtChr->Yvoxels.size() - 1, (size_t)crtChr->currentLayer + 1);
+	}else
+	{
+		if (ImGui::IsItemActive())
+		{
+			if(lastLayerIncrementTime >= .5)
+				crtChr->currentLayer = min(crtChr->Yvoxels.size() - 1, (size_t)crtChr->currentLayer + 1);
+			lastLayerIncrementTime = min(lastLayerIncrementTime + m_deltaTime, 1.f);
+		}
+		else 
+		{
+			lastLayerIncrementTime = 0;
+		}
 	}
 	if (ImGui::Button("Down"))
 	{
 		crtChr->currentLayer = max((size_t)1, (size_t)crtChr->currentLayer - 1);
 	}
-	//ImGui::InputFloat("outlinerSizeScale", &outlinerSizeScale, 0.01f);
-	//ImGui::InputFloat("outlinerBearingScale", &outlinerBearingScale, 0.01f);
-	//ImGui::InputFloat("textSizeScale", &textSizeScale, 0.01f);
-	//ImGui::InputFloat("textBearingScale", &textBearingScale, 0.01f);
-	//ImGui::InputFloat("Y offset", &yoffsettextoutline, 0.002f);
-	//ImGui::InputFloat("X offset", &xoffsettextoutline, 0.002f);
+	else
+	{
+		if (ImGui::IsItemActive())
+		{
+			if (lastLayerDecrementTime >= .5)
+				crtChr->currentLayer = max((size_t)1, (size_t)crtChr->currentLayer - 1);
+			lastLayerDecrementTime = min(lastLayerDecrementTime + m_deltaTime, 1.f);
+		}
+		else
+		{
+			lastLayerDecrementTime = 0;
+		}
+	}
 
 	ImGui::End();
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -73,65 +92,9 @@ void MeshVoxelizer::RenderButtons()
 {
 	glViewport(0, 0, m_width, m_height);
 	
-	Texture2D *selectBtnBG = buttonUp, *moveBtnBG = buttonUp, *planeSliceBtnBG = buttonUp, *rotateBtnBG = buttonUp;
 	Texture2D *shadedMeshBG = buttonUp, *normalsMeshBG = buttonUp, *patchesMeshBG = buttonUp, *sobelMeshBG = buttonUp;
-	switch(toolType)
-	{
-	case SELECT_TOOL:
-		selectBtnBG = buttonDown;
-		break;
-	case MOVE_TOOL:
-		moveBtnBG = buttonDown;
-		break;
-	case ROTATE_TOOL:
-		rotateBtnBG = buttonDown;
-		break;
-	case PLANE_SLICE_TOOL:
-		planeSliceBtnBG = buttonDown;
-		break;
-	default:
-		break;
-	}
 
-	switch (bodyDrawMode)
-	{
-	case 0:
-		shadedMeshBG = buttonDown;
-		break;
-	case 1:
-		normalsMeshBG = buttonDown;
-		break;
-	case 2:
-		patchesMeshBG = buttonDown;
-		break;
-	case 3:
-		sobelMeshBG = buttonDown;
-		break;
-	default:
-		shadedMeshBG = buttonDown;
-		break;
-	}
-
-	
-
-
-	m_sprite->SetCorners(glm::vec3(-1, 0.8, 0), glm::vec3(-0.9, 1, 0));
-	m_sprite->Render(selectBtnBG);
-	m_sprite->Render(selectToolPic);
-
-	m_sprite->SetCorners(glm::vec3(-1, 0.6, 0), glm::vec3(-0.9, 0.8, 0));
-	m_sprite->Render(moveBtnBG);
-	m_sprite->Render(moveToolPic);
-
-	m_sprite->SetCorners(glm::vec3(-1, 0.4, 0), glm::vec3(-0.9, 0.6, 0));
-	m_sprite->Render(rotateBtnBG);
-	m_sprite->Render(rotateToolPic);
-
-
-	m_sprite->SetCorners(glm::vec3(-1, 0.2, 0), glm::vec3(-0.9, 0.4, 0));
-	m_sprite->Render(planeSliceBtnBG);
-	m_sprite->Render(planeSliceToolPic);
-
+			
 	m_sprite->SetCorners(glm::vec3(-1, 0.2-0.05, 0), glm::vec3(-0.9, 0.1 - 0.05, 0));
 	m_sprite->Render(shadedMeshBG);
 	m_sprite->Render(displayShadedPic);
@@ -147,10 +110,6 @@ void MeshVoxelizer::RenderButtons()
 	m_sprite->SetCorners(glm::vec3(-1, -0.1 - 0.05, 0), glm::vec3(-0.9, -0.2 - 0.05, 0));
 	m_sprite->Render(sobelMeshBG);
 	m_sprite->Render(displaySobelPic);
-
-	m_sprite->SetCorners(glm::vec3(-1, -0.2 - 0.1, 0), glm::vec3(-0.95, -0.3 - 0.1, 0));
-	m_sprite->Render(drawBodyPoints?buttonDown:buttonUp);
-	m_sprite->Render(displayVertsPic);
 
 	m_sprite->SetCorners(glm::vec3(-0.95, -0.2 - 0.1, 0), glm::vec3(-0.9, -0.3 - 0.1, 0));
 	m_sprite->Render(drawBodyWireframe ? buttonDown : buttonUp);
@@ -222,31 +181,10 @@ void MeshVoxelizer::OnKeyPress(int key, int mods)
 	if (key < 256)
 		keyStates[key] = true;
 
-	if (key == GLFW_KEY_1)
-		bodyDrawMode = 0;
-	else if (key == GLFW_KEY_2)
-		bodyDrawMode = 1;
-	else if (key == GLFW_KEY_3)
-		bodyDrawMode = 2;
-	else if (key == GLFW_KEY_4)
+	if (key == GLFW_KEY_4)
 		drawBodyWireframe = !drawBodyWireframe;
-	else if (key == GLFW_KEY_5)
-		drawBodyPoints = !drawBodyPoints;
-	else if (key == GLFW_KEY_6)
-		drawFeatureMap = !drawFeatureMap;
-	//else if (key == GLFW_KEY_M)
-	//{
-	//	mNumIters++;
-	//	printf("NUM ITERS: %d\n", mNumIters);
-	//	BuildFeatureMap(crtChr->mMesh, meshes["male1"], crtChr->vertexGraph, mNumIters, mIterStep, mThreshold);
-	//}
-	else
-	if (key == GLFW_KEY_DELETE)
-	{
-/////////////////////////////
-	}else
 
-	if (key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT)
+	else if (key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT)
 	{
 		glfwSetInputMode(window->GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		m_altDown = true;
@@ -271,28 +209,6 @@ void MeshVoxelizer::OnKeyPress(int key, int mods)
 	{
 		camPivot = glm::vec3(0);
 		camera = Camera(glm::vec3(0, 60, 80), glm::vec3(0, 30, 0), glm::vec3(0, 1, 0));
-	}
-	else if (key == GLFW_KEY_Q)
-	{
-		toolType = SELECT_TOOL;
-	}
-	else if (key == GLFW_KEY_I)
-	{
-		invertColor = !invertColor;
-	}
-	else if (key == GLFW_KEY_W)
-	{
-		toolType = MOVE_TOOL;
-		gizmo->crtMode = Gizmo::GizmoMode::MOVE_MODE;
-	}
-	else if (key == GLFW_KEY_E)
-	{
-		toolType = ROTATE_TOOL;
-		gizmo->crtMode = Gizmo::GizmoMode::ROTATE_MODE;
-	}
-	else if (key == GLFW_KEY_S)
-	{
-		toolType = PLANE_SLICE_TOOL;
 	}
 	else if (key == GLFW_KEY_N)
 	{
@@ -335,26 +251,14 @@ void MeshVoxelizer::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
 
 		if (m_LMB)
 		{
-			//camera.RotateAroundPointX(-dy * 0.00499f, camPivot);
-			//camera.RotateAroundPointY(-dx * 0.00499f , camPivot);
+			camera.RotateAroundPointX(-dy * 0.00499f, camPivot);
+			camera.RotateAroundPointY(-dx * 0.00499f, camPivot);
 
-			if (activePlane == NULL)
-			{
-				camera.RotateAroundPointX(-dy * 0.00499f, camPivot);
-				camera.RotateAroundPointY(-dx * 0.00499f, camPivot);
-			}
-			else
-			{
-				camera.RotateAroundPointX(-dy * 0.00499f, gizmoPos);// activePlane->position);
-				camera.RotateAroundPointY(-dx * 0.00499f, gizmoPos);// activePlane->position);
-			}
 			camera.FixOZRotationYup();
-			//ForceRedraw();
 		}
 		else if (m_RMB)
 		{
 			camera.TranslateAlongZ((-dy + dx) * 0.1f);
-			//ForceRedraw();
 		}
 		else if (m_MMB)
 		{
@@ -363,80 +267,8 @@ void MeshVoxelizer::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
 			camera.TranslateAlongY(dy * mmbspeed);
 			camPivot += glm::vec3(-dx * mmbspeed * camera.m_right + dy * mmbspeed * camera.m_up);
 			camera.FixOZRotationYup();
-			//ForceRedraw();
 		}
-		
-		//glfwSetCursorPos(window->GetGLFWWindow(), m_width / 2, m_height / 2);
 	}
-	//else
-	//{
-	//	float dx = mouseX - prev_mousePos.x;
-	//	float dy = prev_mousePos.y - mouseY;
-		
-	//	if (activePlane != NULL)
-	//	{
-	//		glm::vec2 dir = glm::vec2(mouseX, -mouseY) - glm::vec2(prev_mousePos.x, -prev_mousePos.y);
-	//		if (gizmo->getSelectedX())
-	//		{
-	//			glm::vec2 ssdir = glm::vec2(projection_matrix * view_matrix * glm::translate(glm::mat4(1), gizmoPos) * glm::vec4(-1, 0, 0, 1));
-	//			ssdir -= glm::vec2(projection_matrix * view_matrix * glm::translate(glm::mat4(1), gizmoPos) * glm::vec4(-0.5, 0, 0, 1));
-	//	
-	//			float dirlen = sqrt(glm::length(dir));
-	//			float ssdirlen = glm::length(ssdir);
-	//			if (dirlen > 0.001 && ssdirlen > 0.001) {
-	//				float dotprod = glm::dot(glm::normalize(dir), glm::normalize(ssdir));// - prev_ssdir));
-	//				
-	//				if (gizmo->crtMode == Gizmo::GizmoMode::MOVE_MODE)
-	//					activePlane->point = glm::vec3(glm::translate(glm::mat4(1), glm::vec3(-dirlen * dotprod, 0, 0)) *
-	//						glm::vec4(activePlane->point, 1));
-	//				else
-	//					activePlane->normal = glm::vec3(glm::rotate(glm::mat4(1), dirlen * dotprod* 0.1f, glm::vec3(1, 0, 0)) * glm::vec4(activePlane->normal, 0));
-	//				
-	//				gizmoPos = activePlane->point;
-	//			}
-	//			prev_ssdir = ssdir;
-
-	//		}
-	//		else if (gizmo->getSelectedY())
-	//		{
-	//			glm::vec2 ssdir = glm::vec2(projection_matrix * view_matrix * glm::translate(glm::mat4(1), gizmoPos) * glm::vec4(0, 1, 0, 1));
-	//			ssdir -= glm::vec2(projection_matrix * view_matrix * glm::translate(glm::mat4(1), gizmoPos) * glm::vec4(0, 0.5, 0, 1));
-	//	
-	//			float dirlen = sqrt(glm::length(dir));
-	//			float ssdirlen = glm::length(ssdir);
-	//			if (dirlen > 0.001 && ssdirlen > 0.001)
-	//			{
-	//				float dotprod = glm::dot(glm::normalize(dir), glm::normalize(ssdir));// - prev_ssdir));
-	//				if (gizmo->crtMode == Gizmo::GizmoMode::MOVE_MODE)
-	//					activePlane->point = glm::vec3(glm::translate(glm::mat4(1), glm::vec3(0, dirlen * dotprod, 0)) *
-	//						glm::vec4(activePlane->point, 1));
-	//				else
-	//					activePlane->normal = glm::vec3(glm::rotate(glm::mat4(1), -dirlen * dotprod* 0.1f, glm::vec3(0, 1, 0)) * glm::vec4(activePlane->normal, 0));
-	//				gizmoPos = activePlane->point;
-	//			}
-	//			prev_ssdir = ssdir;
-	//		}
-	//		else if (gizmo->getSelectedZ())
-	//		{
-	//			glm::vec2 ssdir = glm::vec2(projection_matrix * view_matrix * glm::translate(glm::mat4(1), gizmoPos) * glm::vec4(0, 0, 1, 1));
-	//			ssdir -= glm::vec2(projection_matrix * view_matrix * glm::translate(glm::mat4(1), gizmoPos) * glm::vec4(0, 0, 0.5, 1));
-	//		
-	//			float dirlen = sqrt(glm::length(dir));
-	//			float ssdirlen = glm::length(ssdir);
-	//			if (dirlen > 0.001 && ssdirlen > 0.001) {
-	//				float dotprod = glm::dot(glm::normalize(dir), glm::normalize(ssdir));// - prev_ssdir));
-
-	//				if (gizmo->crtMode == Gizmo::GizmoMode::MOVE_MODE)
-	//					activePlane->point = glm::vec3(glm::translate(glm::mat4(1), glm::vec3(0,0,dirlen * dotprod)) *
-	//						glm::vec4(activePlane->point, 1));
-	//				else
-	//					activePlane->normal = glm::vec3(glm::rotate(glm::mat4(1), -dirlen * dotprod * 0.1f, glm::vec3(0, 0, 1)) * glm::vec4(activePlane->normal, 0));
-	//				gizmoPos = activePlane->point;
-	//			}
-	//			prev_ssdir = ssdir;
-	//		}
-	//	}
-	//}	
 	prev_mousePos = glm::ivec2(mouseX, mouseY);
 }
 
@@ -450,66 +282,7 @@ void MeshVoxelizer::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods
 			glm::uvec3 readPx = glm::uvec3(readPixels[(m_width * (m_height - mouseY) + mouseX) * 3],
 				readPixels[(m_width * (m_height - mouseY) + mouseX) * 3 + 1],
 				readPixels[(m_width * (m_height - mouseY) + mouseX) * 3 + 2]);
-			if (readPx.r == 255 && readPx.g == 0 && readPx.b == 0)
-			{
-				gizmo->setSelectedX(true);
-			}
-			else if (readPx.r == 0 && readPx.g == 255 && readPx.b == 0)
-			{
-				gizmo->setSelectedY(true);
-			}
-			else if (readPx.r == 0 && readPx.g == 0 && readPx.b == 255)
-			{
-				gizmo->setSelectedZ(true);
-			}
-			else if (readPx.r == 255 && readPx.g == 255 && readPx.b == 0)
-			{
-				toolType = SELECT_TOOL;
-				//gizmo->SetVisible(false);
-			}
-			else if (readPx.r == 255 && readPx.g == 0 && readPx.b == 255)
-			{
-				toolType = MOVE_TOOL;
-				gizmo->crtMode = Gizmo::GizmoMode::MOVE_MODE;
-			}
-			else if (readPx.r == 255 && readPx.g == 0 && readPx.b == 127)
-			{
-				toolType = ROTATE_TOOL;
-				gizmo->crtMode = Gizmo::GizmoMode::ROTATE_MODE;
-			}
-			else if (readPx.r == 0 && readPx.g == 255 && readPx.b == 255)
-			{
-				toolType = PLANE_SLICE_TOOL;
-				gizmo->SetVisible(false);
-			}
-			//m_sprite->Render(glm::vec3(0.25, 0.25, 0.25));
-			//m_sprite->Render(glm::vec3(0.25, 0.25, 0.5));
-			//m_sprite->Render(glm::vec3(0.25, 0.5, 0.5));
-			//m_sprite->Render(glm::vec3(0.25, 0.5, 0.75));
-
-			else if (readPx.r == 64 && readPx.g == 64 && readPx.b == 64)
-			{
-				bodyDrawMode = 0;
-			}
-			else if (readPx.r == 64 && readPx.g == 64 && readPx.b == 127)
-			{
-				bodyDrawMode = 1;
-			}
-			else if (readPx.r == 64 && readPx.g == 127 && readPx.b == 127)
-			{
-				bodyDrawMode = 2;
-				invertColor = false;
-			}
-			else if (readPx.r == 64 && readPx.g == 127 && readPx.b == 191)
-			{
-				bodyDrawMode = 3;
-				invertColor = true;
-			}
-			else if (readPx.r == 191 && readPx.g == 127 && readPx.b == 191) 
-			{
-				drawBodyPoints = !drawBodyPoints;
-			}
-			else if (readPx.r == 191 && readPx.g == 0 && readPx.b == 191)
+			if (readPx.r == 191 && readPx.g == 0 && readPx.b == 191)
 			{
 				drawBodyWireframe = !drawBodyWireframe;
 			}
@@ -517,45 +290,6 @@ void MeshVoxelizer::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods
 			{
 				backgroundID = (backgroundID + 1) % 6;
 			}
-			else
-			{
-
-				if (toolType == SELECT_TOOL)
-				{
-					uint64_t id = calculateColorHash(readPx);
-					std::unordered_map<uint64_t, glm::vec3*>::iterator it = planesHashes.find(id);
-					if (it != planesHashes.end())
-					{
-						activePlane = it->second;
-						selectedIndex = calculateColorHash(readPx);
-						gizmoPos = *activePlane;
-					}
-					else activePlane = NULL;
-					/////////////////////////////////////////////////////////////////
-				}
-				else if (toolType == MOVE_TOOL || toolType == ROTATE_TOOL)
-				{
-					uint64_t id = calculateColorHash(readPx);
-					std::unordered_map<uint64_t, glm::vec3*>::iterator it = planesHashes.find(id);
-					if (it != planesHashes.end())
-					{
-						activePlane = it->second;
-						selectedIndex = calculateColorHash(readPx);
-						gizmoPos = *activePlane;
-					}
-					else activePlane = NULL;
-				}
-				else if(toolType == PLANE_SLICE_TOOL)
-				{
-					//AddPlaneAtScreenPoint(glm::vec2(mouseX, mouseY));
-					if(activePlane)
-						gizmoPos = *activePlane;
-				}
-			}
-		}
-		else
-		{
-			//glfwSetCursorPos(window->GetGLFWWindow(), m_width / 2, m_height / 2);
 		}
 	}
 	else if (button == 2)
@@ -572,9 +306,6 @@ void MeshVoxelizer::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods
 
 void MeshVoxelizer::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods)
 {
-	gizmo->setSelectedX(false);
-	gizmo->setSelectedY(false);
-	gizmo->setSelectedZ(false);
 	if (button == 1)
 		m_LMB = false;
 	else if (button == 2)

@@ -40,13 +40,6 @@ MeshVoxelizer::MeshVoxelizer()
 	camera = Camera(glm::vec3(0, 60, 80), glm::vec3(0, 30, 0), glm::vec3(0, 1, 0));
 	memset(keyStates, 0, 256);
 
-
-	gizmo = new Gizmo();
-	gizmo->Init(shaders["FlatColor"], &view_matrix, &projection_matrix);
-
-	grid = new Grid();
-	grid->Init(shaders["FlatColor"], &view_matrix, &projection_matrix);
-
 	colorPickingFB.generate(m_width, m_height);
 
 	readPixels = (GLubyte*)malloc(3 * m_width * m_height);
@@ -87,8 +80,8 @@ MeshVoxelizer::MeshVoxelizer()
 		}
 		closedir(dir);
 	}*/
-	InitBodyModel("Assets/Models", "batman.obj", "batman.png", 1);
-	InitBodyModel("Assets/Models/Tom", "tom.obj", "tom.png", 6);
+	//InitBodyModel("Assets/Models", "batman.obj", "batman.png", 1);
+	//InitBodyModel("Assets/Models/Tom", "tom.obj", "tom.png", 6);
 	//InitBodyModel("Assets/Models/Spike", "spike.obj", "spike.png", 4);
 	InitBodyModel("Assets/Models/Jerry", "jerry.obj", "jerry.png", 6);
 	OnWindowResize(800, 450);
@@ -158,7 +151,6 @@ void MeshVoxelizer::InitBodyModel(const char *fileLocation, const char* fileName
 	
 	MeasureBodyModel();
 
-	activePlane = NULL;
 	camPivot = glm::vec3(0, crtChr->aabbMax.y - (crtChr->aabbMin.y + crtChr->aabbMax.y) * .333f,0);
 
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -194,7 +186,7 @@ void MeshVoxelizer::MeasureBodyModel()
 		mesh->colors[v].y = crtChr->mMesh->texCoords[v].y;
 	}
 
-	float res = .5;
+	float res = 1;
 	float precision = .01;
 
 	/*vx_mesh_t* result;

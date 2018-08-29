@@ -61,8 +61,6 @@ struct MeasureableCharacter
 
 class MeshVoxelizer : public SimpleScene
 {
-	enum ActiveToolType { SELECT_TOOL, MOVE_TOOL, ROTATE_TOOL, PLANE_SLICE_TOOL};
-
 	public:
 		MeshVoxelizer();
 		~MeshVoxelizer();
@@ -100,14 +98,12 @@ class MeshVoxelizer : public SimpleScene
 private:
 	
 	glm::vec3 camPivot;
-	Gizmo *gizmo;
 	Camera camera;
 
 	glm::mat4 model_matrix, view_matrix, projection_matrix;
 	BaseMesh *lineMesh;
 	BaseMesh *gizmoLine, *gizmoCone;
 	
-	Grid *grid;
 	BaseMesh *pointMesh;
 	Mesh *cubeMesh;
 
@@ -131,12 +127,10 @@ private:
 	glm::ivec2 prev_mousePos;
 	glm::vec2 prev_ssdir = glm::vec2(0, 0);
 	ColorGenerator colorGen;
-	Texture2D *selectToolPic, *moveToolPic, *rotateToolPic, *buttonUp, *buttonDown, *buttonDisabled, *planeSliceToolPic;
+	Texture2D *buttonUp, *buttonDown, *buttonDisabled;
 	Texture2D *displayShadedPic, *displayNormalsPic, *displayPatchesPic, *displaySobelPic, *displayVertsPic, *displayEdgesPic, *changeBGPic;
 	Sprite *m_sprite;
 	bool showColorPickingFB = false;
-	
-	ActiveToolType toolType = SELECT_TOOL;
 
 	ColorGenerator colorGenerator;
 	
@@ -147,7 +141,6 @@ private:
 	//int mNumIters = 3;
 	float mIterStep=0.005f, mThreshold = 0.99f;
 
-	glm::vec3 *activePlane;
 
 	float outlinerSizeScale = .61f, outlinerBearingScale = .52f,
 		textSizeScale = .5f, textBearingScale = .5f,
@@ -157,19 +150,11 @@ private:
 	MeasureableCharacter* crtChr;
 	int crtChrIDX;
 	/////////////////////////these were globals
-	bool RENDER_LABELS = true;
-	bool RENDER_PLANE_CENTERS = true;
-	bool DEBUG_DRAW_POINTS = true;
-	bool DEBUG_DRAW_LINES = true;
-
-	int bodyDrawMode = 0;
 	bool showVoxels = false;
 	bool drawBodyWireframe = true;
-	bool drawBodyPoints = false;
-	bool drawFeatureMap = false;
-	bool invertColor = false;
 	int backgroundID = 0;
-
+	float lastLayerIncrementTime = 0;
+	float lastLayerDecrementTime = 0;
 };
 
 

@@ -91,14 +91,6 @@ MeshVoxelizer::~MeshVoxelizer()
 
 void MeshVoxelizer::LoadMaterials()
 { 
-	selectToolPic = new Texture2D();
-	selectToolPic->Load2D("Assets/selectTool.png", GL_REPEAT);
-
-	moveToolPic = new Texture2D();
-	moveToolPic->Load2D("Assets/moveTool.png", GL_REPEAT);
-
-	rotateToolPic = new Texture2D();
-	rotateToolPic->Load2D("Assets/rotateTool.png", GL_REPEAT);
 
 	buttonUp= new Texture2D();
 	buttonUp->Load2D("Assets/buttonUp.png", GL_REPEAT);
@@ -109,8 +101,6 @@ void MeshVoxelizer::LoadMaterials()
 	buttonDisabled = new Texture2D();
 	buttonDisabled->Load2D("Assets/buttonDisabled.png", GL_REPEAT);
 	
-	planeSliceToolPic = new Texture2D();
-	planeSliceToolPic->Load2D("Assets/planeSliceTool.png", GL_REPEAT);
 
 	displayShadedPic = new Texture2D();
 	displayShadedPic->Load2D("Assets/displayShaded.png", GL_REPEAT);
@@ -229,31 +219,6 @@ void MeshVoxelizer::RenderBody()
 	glLineWidth(2);
 	glm::mat4 modelMatrix = glm::mat4(1);// glm::scale(glm::mat4(1), glm::vec3(0.5f));
 
-
-	glm::vec3 meshColor, wireframeColor, pointsColor;
-	switch (bodyDrawMode)
-	{
-	case 0:
-		meshColor = glm::vec3(0.8, 1, 1);
-		wireframeColor = glm::vec3(0.5, 1.2, 1.6);
-		pointsColor = glm::vec3(10, 10, 1);
-		break;
-	case 1:
-		meshColor = glm::vec3(1);
-		wireframeColor = glm::vec3(10);
-		pointsColor = glm::vec3(0.5);
-		break;
-	case 2:
-		meshColor = glm::vec3(1);
-		wireframeColor = glm::vec3(0.5);
-		pointsColor = glm::vec3(1.2);
-		break;
-	default:
-		meshColor = glm::vec3(0.8, 1, 1);
-		wireframeColor = glm::vec3(0.5, 1.2, 1.6);
-		pointsColor = glm::vec3(10, 10, 1);
-		break;
-	}
 	Shader *shader = shaders["default"];
 	shader->Use();
 	
@@ -269,6 +234,7 @@ void MeshVoxelizer::RenderBody()
 		
 
 	// Bind view matrix
+
 	int loc_view_matrix = glGetUniformLocation(shader->program, "View");
 	glUniformMatrix4fv(loc_view_matrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
 
@@ -299,6 +265,7 @@ void MeshVoxelizer::FrameStart()
 
 void MeshVoxelizer::Update(float deltaTimeSeconds)
 {
+	view_matrix = camera.GetViewMatrix();
 	m_deltaTime = deltaTimeSeconds;
 
 	colorPickingFB.unbind();
@@ -310,75 +277,9 @@ void MeshVoxelizer::Update(float deltaTimeSeconds)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	
 	
 	RenderBody();
 
-	glUseProgram(shaders["FlatColor"]->GetProgramID());
-
-	view_matrix = camera.GetViewMatrix();
-	//projection_matrix = glm::perspective(45.f, (float)m_width/ (float)m_height, 1.f, 200.f);
-	glUniformMatrix4fv(shaders["FlatColor"]->GetUniformLocation(std::string("View")), 1, false, glm::value_ptr(view_matrix));
-	glUniformMatrix4fv(shaders["FlatColor"]->GetUniformLocation(std::string("Projection")), 1, false, glm::value_ptr(projection_matrix));
-	//foloseste shaderul	
-	glEnable(GL_DEPTH_TEST);
-	//grid->DrawGrid(glm::scale(glm::mat4(1), glm::vec3(0.5f)), glm::vec3(0,0,0));
-
-///////////DRAW POINTS
-	glUseProgram(shaders["FlatColor"]->GetProgramID());
-	glDisable(GL_DEPTH_TEST);
-	model_matrix = glm::mat4(1);
-	glUniformMatrix4fv(shaders["FlatColor"]->GetUniformLocation(std::string("Model")), 1, false, glm::value_ptr(model_matrix));
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glUniform3f(shaders["FlatColor"]->GetUniformLocation(std::string("color")), 1, 1, 1);
-	
-	glPointSize(14);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if (activePlane != NULL)
-	{
-		if (toolType == MOVE_TOOL || toolType == ROTATE_TOOL)
-		{
-			gizmo->SetVisible(true);
-		}
-		else
-		{
-			gizmo->SetVisible(false);
-		}	
-	}
-	else
-	{
-		gizmo->SetVisible(false);
-	}
-	
-//#define DRAW_PLANES_AND_POINTS
-#ifdef DRAW_PLANES_AND_POINTS
-	//DRAW PLANE POINTS
-	for (int i = 0; i < slicePlanes.size(); i++)
-	{
-		model_matrix = glm::translate(glm::mat4(1), slicePlanes[i]->point);
-		glDisable(GL_DEPTH_TEST);
-		glUniformMatrix4fv(shaders["FlatColor"]->GetUniformLocation(std::string("Model")), 1, false, glm::value_ptr(model_matrix));
-		pointMesh->draw(GL_POINTS);
-		glm::mat4 rotMat = glm::mat4(1);
-		float dotprod = glm::dot(glm::vec3(0, 1, 0), slicePlanes[i]->normal);
-		if(dotprod != 1)
-		{
-			if (fabs(dotprod + 1) > 0.0001f)
-				rotMat = glm::rotate(glm::mat4(1), acos(dotprod), glm::cross(glm::vec3(0, 1, 0), slicePlanes[i]->normal));
-			else
-				rotMat = glm::rotate(glm::mat4(1), 3.1415926f, glm::vec3(1, 0, 0));
-		}
-		glEnable(GL_DEPTH_TEST);
-		grid->DrawGrid(model_matrix * rotMat * glm::scale(glm::mat4(1), glm::vec3(0.2)));
-	}
-#endif
-	glDisable(GL_DEPTH_TEST);
-
-	//mTextOutliner.RenderText(std::string("This is sample text"), .0f, .0f, 2.0f, glm::vec3(0));
-	
-	gizmo->Render(camera, gizmoPos);
-	
 	RenderImGUI();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// COLOR PICKING FB ///////////////////////////////////////////////////////////////////// 
@@ -389,23 +290,7 @@ void MeshVoxelizer::Update(float deltaTimeSeconds)
 	glViewport(m_width / GUI_FRACTION, 0, m_width - m_width / GUI_FRACTION , m_height);
 	glEnable(GL_DEPTH_TEST);
 	
-	glUseProgram(shaders["FlatColor"]->GetProgramID());
-	glUniformMatrix4fv(shaders["FlatColor"]->GetUniformLocation(std::string("View")), 1, false, glm::value_ptr(view_matrix));
-	glUniformMatrix4fv(shaders["FlatColor"]->GetUniformLocation(std::string("Projection")), 1, false, glm::value_ptr(projection_matrix));
-	//for (int i = 0; i < crtChr->slicePlanes.size(); i++)
-	//{
-	//	model_matrix = glm::translate(glm::mat4(1), crtChr->slicePlanes[i]->point);
-	//	glUniform3f(shaders["FlatColor"]->GetUniformLocation(std::string("color")),
-	//										crtChr->slicePlanes[i]->colorFBOid.x / 255.f,
-	//										crtChr->slicePlanes[i]->colorFBOid.y / 255.f,
-	//										crtChr->slicePlanes[i]->colorFBOid.z / 255.f);
-	//	glUniformMatrix4fv(shaders["FlatColor"]->GetUniformLocation(std::string("Model")), 1, false, glm::value_ptr(model_matrix));
-	//	pointMesh->draw(GL_POINTS);
-	//}
 
-	glLineWidth(8);
-	gizmo->Render(camera, gizmoPos);
-	
 	colorPickingFB.unbind();
 	
 	RenderButtons();
