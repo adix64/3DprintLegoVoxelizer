@@ -18,7 +18,6 @@
 #include <set>
 
 
-
 typedef std::vector<VertexFormat> TVertexList;
 typedef std::vector<uint32_t> TIndexList;
 typedef std::vector<glm::vec3> CurvePointList;
@@ -45,7 +44,7 @@ struct MeasureableCharacter
 {
 	std::string mName;
 	SimpleScene *anthroSys;
-	Mesh *mMesh, *mVoxelMesh;
+	Mesh *mMesh = NULL, *mVoxelMesh = NULL;
 	std::vector<glm::vec3> pc_points, pc_colors;
 	std::vector<std::vector<glm::vec3>> Yvoxels, YvoxCols;
 	std::vector<unsigned> indexLayerStops;
@@ -57,6 +56,7 @@ struct MeasureableCharacter
 	std::vector<DebugPoint> debugPoints;
 	std::vector<DebugLine> debugLines;
 	int currentLayer = 1;
+	float voxResolution = .5f;
 };
 
 class MeshVoxelizer : public SimpleScene
@@ -72,7 +72,7 @@ class MeshVoxelizer : public SimpleScene
 		void LoadMeshes();
 		void LoadShaders();
 
-		void MeasureBodyModel();
+		void VoxelizeBodyModel(float res);
 		void InitBodyModel(const char* fileLocation, const char* fileName, const char *texture = NULL, float scale = 1.f);
 
 		void FrameStart() override;

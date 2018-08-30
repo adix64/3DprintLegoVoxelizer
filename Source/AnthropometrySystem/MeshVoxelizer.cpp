@@ -81,10 +81,11 @@ MeshVoxelizer::MeshVoxelizer()
 		}
 		closedir(dir);
 	}*/
+	InitBodyModel("Assets/Models/Jerry", "jerry.obj", "jerry.png", 6);
 	//InitBodyModel("Assets/Models", "batman.obj", "batman.png", 1);
 	//InitBodyModel("Assets/Models/Tom", "tom.obj", "tom.png", 6);
 	//InitBodyModel("Assets/Models/Spike", "spike.obj", "spike.png", 4);
-	InitBodyModel("Assets/Models/Jerry", "jerry.obj", "jerry.png", 6);
+	
 	OnWindowResize(800, 450);
 	
 
@@ -149,8 +150,8 @@ void MeshVoxelizer::InitBodyModel(const char *fileLocation, const char* fileName
 		crtChr->vertexGraph[mesh->indices[i + 2]].emplace(mesh->indices[i]);
 		crtChr->vertexGraph[mesh->indices[i + 2]].emplace(mesh->indices[i + 1]);
 	}
-	
-	MeasureBodyModel();
+
+	VoxelizeBodyModel(0.5);
 
 	camPivot = glm::vec3(0, crtChr->aabbMax.y - (crtChr->aabbMin.y + crtChr->aabbMax.y) * .333f,0);
 
@@ -162,39 +163,37 @@ void MeshVoxelizer::InitBodyModel(const char *fileLocation, const char* fileName
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MeshVoxelizer::MeasureBodyModel()
+void MeshVoxelizer::VoxelizeBodyModel(float res)
 {
 	
-	std::ofstream file((RESOURCE_PATH::MODELS + "mesh_voxelized_res.obj").c_str());
+	//std::ofstream file((RESOURCE_PATH::MODELS + "mesh_voxelized_res.obj").c_str());
 
 
-	size_t voffset = 0;
-	size_t noffset = 0;
+	//size_t voffset = 0;
+	//size_t noffset = 0;
 
 
-	vx_mesh_t* mesh;
-
-	mesh = vx_mesh_alloc(crtChr->mMesh->positions.size(), crtChr->mMesh->indices.size());
+	
+	vx_mesh_t *vxmesh = vx_mesh_alloc(crtChr->mMesh->positions.size(), crtChr->mMesh->indices.size());
 
 	for (size_t f = 0; f < crtChr->mMesh->indices.size(); f++) {
-		mesh->indices[f] = crtChr->mMesh->indices[f];
+		vxmesh->indices[f] = crtChr->mMesh->indices[f];
 	}
 	for (size_t v = 0; v < crtChr->mMesh->positions.size(); v++) {
-		mesh->vertices[v].x = crtChr->mMesh->positions[v].x;
-		mesh->vertices[v].y = crtChr->mMesh->positions[v].y;
-		mesh->vertices[v].z = crtChr->mMesh->positions[v].z;
-		mesh->colors[v].x = crtChr->mMesh->texCoords[v].x;
-		mesh->colors[v].y = crtChr->mMesh->texCoords[v].y;
+		vxmesh->vertices[v].x = crtChr->mMesh->positions[v].x;
+		vxmesh->vertices[v].y = crtChr->mMesh->positions[v].y;
+		vxmesh->vertices[v].z = crtChr->mMesh->positions[v].z;
+		vxmesh->colors[v].x = crtChr->mMesh->texCoords[v].x;
+		vxmesh->colors[v].y = crtChr->mMesh->texCoords[v].y;
 	}
-
-	float res = 1;
+	
 	float precision = .01;
 
 	/*vx_mesh_t* result;
 	result = vx_voxelize(mesh, res, res, res, precision);
 */
 	vx_point_cloud_t *pc_result;
-	pc_result = vx_voxelize_pc(mesh, res, res, res, precision);
+	pc_result = vx_voxelize_pc(vxmesh, res, res, res, precision);
 	
 	int texW = crtChr->texW, texH = crtChr->texH, numCh = crtChr->texCh;
 	glm::uvec2 coords;
@@ -237,6 +236,8 @@ void MeshVoxelizer::MeasureBodyModel()
 
 	std::vector<std::vector<glm::vec3>> &Yvoxels = crtChr->Yvoxels;
 	std::vector<std::vector<glm::vec3>> &YvoxCols = crtChr->YvoxCols;
+	Yvoxels.clear();
+	YvoxCols.clear();
 	Yvoxels.resize(dimY, std::vector<glm::vec3>());
 	YvoxCols.resize(dimY, std::vector<glm::vec3>());
 	int Ycoord;
@@ -281,6 +282,11 @@ void MeshVoxelizer::MeasureBodyModel()
 		indexLayerStops.push_back(vindex);
 	}
 	layeredMesh->InitFromData(positions, normals, vcolors, indices);
+	if (crtChr->mVoxelMesh)
+	{
+		crtChr->mVoxelMesh->ClearData();
+		delete crtChr->mVoxelMesh;
+	}
 	crtChr->mVoxelMesh = layeredMesh;
 	crtChr->indexLayerStops = indexLayerStops;
 
@@ -325,12 +331,14 @@ void MeshVoxelizer::MeasureBodyModel()
 	//	noffset += 6;
 	//}
 
-	//vx_mesh_free(result);
-	//vx_mesh_free(mesh);
+	vx_point_cloud_free(pc_result);
+	vx_mesh_free(vxmesh);
 	//file.close();
 	//Mesh* vmesh = new Mesh("mesh_voxelized_res.obj");
 	//vmesh->LoadMesh((RESOURCE_PATH::MODELS).c_str(),"mesh_voxelized_res.obj");
 	//crtChr->mVoxelMesh = vmesh;
+
+
 }
 
 

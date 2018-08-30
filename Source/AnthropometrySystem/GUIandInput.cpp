@@ -45,10 +45,10 @@ void MeshVoxelizer::RenderImGUI()
 	}
 	ImGui::Text("_____________________");
 
-	ImGui::Text("_____________________");
+
 	ImGui::Text("Options:");
 	ImGui::Checkbox("Display Voxelized", &showVoxels);
-	if (ImGui::Button("Up"))
+	if (ImGui::Button("Level++"))
 	{
 		crtChr->currentLayer = min(crtChr->Yvoxels.size() - 1, (size_t)crtChr->currentLayer + 1);
 	}else
@@ -64,7 +64,7 @@ void MeshVoxelizer::RenderImGUI()
 			lastLayerIncrementTime = 0;
 		}
 	}
-	if (ImGui::Button("Down"))
+	if (ImGui::Button("Level--"))
 	{
 		crtChr->currentLayer = max((size_t)1, (size_t)crtChr->currentLayer - 1);
 	}
@@ -80,6 +80,19 @@ void MeshVoxelizer::RenderImGUI()
 		{
 			lastLayerDecrementTime = 0;
 		}
+	}
+	ImGui::Text("_____________________");
+
+	if (ImGui::Button("Resolution++"))
+	{
+		crtChr->voxResolution += 0.25f;
+		VoxelizeBodyModel(crtChr->voxResolution);
+	}
+
+	if (ImGui::Button("Resolution--"))
+	{
+		crtChr->voxResolution -= 0.25f;
+		VoxelizeBodyModel(crtChr->voxResolution);
 	}
 
 	ImGui::End();

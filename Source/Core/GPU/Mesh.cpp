@@ -185,12 +185,12 @@ bool Mesh::InitFromData(vector<glm::vec3>& positions,
 	vector<glm::vec3>& vcolors,
 	vector<unsigned int>& indices)
 {
-	this->positions = positions;
+	/*this->positions = positions;
 	this->normals = normals;
 	this->vertColors = vcolors;
-	this->indices = indices;
+	this->indices = indices;*/
 
-	InitFromData();
+	//InitFromData();
 	*buffers = UtilsGPU::UploadData(positions, normals, vcolors, indices);
 	return buffers->VAO != 0;
 }
