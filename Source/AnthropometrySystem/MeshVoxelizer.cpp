@@ -201,6 +201,8 @@ void MeshVoxelizer::VoxelizeBodyModel(float res)
 	size_t base_idx;
 	glm::vec3 aabbMax(-999999);
 	glm::vec3 aabbMin( 999999);
+	crtChr->pc_points.clear();
+	crtChr->pc_colors.clear();
 	for (int i = 0; i < pc_result->nvertices; i++)
 	{
 		crtChr->pc_points.push_back(glm::vec3(pc_result->vertices[i].x,
