@@ -3,7 +3,7 @@
 
 #include <include/gl.h>
 // GLM
-
+#include <vector>
 
 #ifndef CUBE_MAP_FBO_H
 #define	CUBE_MAP_FBO_H
@@ -17,12 +17,12 @@ public:
 	~CubeMapFBO();
 
 	bool Init(unsigned int WindowWidth, unsigned int WindowHeight);
-
+	bool Init(unsigned int WindowWidth, unsigned int WindowHeight, std::vector<unsigned char*> &skybox);
 	void BindForWriting(GLenum face,  int i);
 
 	void BindForReading(GLenum TextureUnit, int uniform_location);
 
-private:
+//private:
 	GLuint m_fbo;
 	GLuint m_shadowMap;
 	GLuint m_depth;

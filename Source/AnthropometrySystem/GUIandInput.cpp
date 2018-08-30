@@ -337,5 +337,5 @@ void MeshVoxelizer::OnWindowResize(int width, int height)
 	free(readPixels);
 	readPixels = (GLubyte*)malloc(3 * width * height);
 	aspect = (float)(m_width - m_width / GUI_FRACTION) / (float)height;
-	projection_matrix = glm::perspective(45.0f, aspect, 1.f, 1000.f);
+	projection_matrix = glm::perspective(45.0f, aspect, 1.f, 2000.f);
 }

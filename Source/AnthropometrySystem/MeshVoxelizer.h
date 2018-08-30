@@ -95,6 +95,7 @@ class MeshVoxelizer : public SimpleScene
 		void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
 		void OnWindowResize(int width, int height) override;
 		void RenderButtons();
+		void RenderSkybox();
 private:
 	
 	glm::vec3 camPivot;
@@ -106,6 +107,7 @@ private:
 	
 	BaseMesh *pointMesh;
 	Mesh *cubeMesh;
+	Mesh *skyboxMesh;
 
 	Sprite *fsQuad, *textSprite;
 	TextRenderer mTextRenderer, mTextOutliner;
@@ -155,6 +157,7 @@ private:
 	int backgroundID = 0;
 	float lastLayerIncrementTime = 0;
 	float lastLayerDecrementTime = 0;
+	GLuint environCubeMap;
 };
 
 
@@ -165,5 +168,5 @@ int FurthestPointAlongDir(std::unordered_map<int, glm::vec3> &verts, glm::vec3 &
 int IDofClosestCentroidToPoint(std::unordered_map<int, glm::vec3> &centroids, glm::vec3 pPoint, float thresh = 99999.f);
 
 
-#define GUI_FRACTION 16
+#define GUI_FRACTION 10
 #define mPI 3.1415926f

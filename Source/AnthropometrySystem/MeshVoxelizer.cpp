@@ -28,7 +28,8 @@ MeshVoxelizer::MeshVoxelizer()
 	LoadShaders();
 	cubeMesh = new Mesh("cube");
 	cubeMesh->LoadMesh("Assets/Models/Primitives", "cube.obj");
-
+	skyboxMesh = new Mesh("skybox");
+	skyboxMesh->LoadMesh("Assets/Models/Primitives", "skybox.obj", 1000);
 
 	camPivot = glm::vec3(0);
 	model_matrix = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
@@ -265,9 +266,9 @@ void MeshVoxelizer::MeasureBodyModel()
 			for (int k = 0; k < cubeMesh->positions.size(); k++)
 			{
 				glm::vec3 &v = Yvoxels[i][j];
-				glm::vec3 transformedPos = glm::vec3(glm::mat4(.5, 0, 0, 0,
-																0, .5, 0, 0,
-																0, 0, .5, 0,
+				glm::vec3 transformedPos = glm::vec3(glm::mat4(res, 0, 0, 0,
+																0, res, 0, 0,
+																0, 0, res, 0,
 																v.x, v.y, v.z, 1)
 											* glm::vec4(cubeMesh->positions[k], 1));
 				positions.push_back(transformedPos);
