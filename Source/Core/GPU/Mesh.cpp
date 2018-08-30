@@ -57,7 +57,7 @@ bool Mesh::LoadMesh(const string& fileLocation, const string& fileName, float sc
 	Assimp::Importer Importer;
 
 	unsigned int flags = 0;// aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_FixInfacingNormals;
-	//if (glDrawMode == GL_TRIANGLES) flags |= aiProcess_Triangulate;
+	flags |= aiProcess_Triangulate;
 
 	const aiScene* pScene = Importer.ReadFile(file, flags);
 

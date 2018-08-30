@@ -81,9 +81,9 @@ MeshVoxelizer::MeshVoxelizer()
 		}
 		closedir(dir);
 	}*/
-	InitBodyModel("Assets/Models/Jerry", "jerry.obj", "jerry.png", 6);
+	//InitBodyModel("Assets/Models/Jerry", "jerry.obj", "jerry.png", 6);
 	//InitBodyModel("Assets/Models", "batman.obj", "batman.png", 1);
-	//InitBodyModel("Assets/Models/Tom", "tom.obj", "tom.png", 6);
+	InitBodyModel("Assets/Models/Tom", "tom.obj", "tom.png", 6);
 	//InitBodyModel("Assets/Models/Spike", "spike.obj", "spike.png", 4);
 	
 	OnWindowResize(800, 450);

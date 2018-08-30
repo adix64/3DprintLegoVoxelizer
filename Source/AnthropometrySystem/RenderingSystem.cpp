@@ -156,6 +156,8 @@ void MeshVoxelizer::LoadMaterials()
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, 512, 512, 0, GL_RGB, GL_UNSIGNED_BYTE, skybox[i]);
 	}
+
+	activeLayerColor = otherLayersColor = glm::vec3(1);
 }	
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,9 +289,6 @@ void MeshVoxelizer::RenderBody()
 	glUniform1i(loc_cubeMap, 1);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	int colLoc = glGetUniformLocation(shader->GetProgramID(), "color");
-		
-	glUniform3f(colLoc, .5f, .5f, .5f);
 	
 	glBindVertexArray(cubeMesh->GetBuffers()->VAO);
 
@@ -297,7 +296,20 @@ void MeshVoxelizer::RenderBody()
 
 	glBindVertexArray(crtChr->mVoxelMesh->GetBuffers()->VAO);
 	glUniformMatrix4fv(loc_model_matrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-	glDrawElements(GL_TRIANGLES, crtChr->indexLayerStops[crtChr->currentLayer], GL_UNSIGNED_INT, 0);
+
+	int colLoc = glGetUniformLocation(shader->GetProgramID(), "uColor");
+	glUniform3f(colLoc, activeLayerColor.x, activeLayerColor.y, activeLayerColor.z);
+	int crtLayerIndices = crtChr->currentLayer > 0 ? crtChr->indexLayerStops[crtChr->currentLayer - 1] : 0;
+	glDrawElementsBaseVertex(GL_TRIANGLES, crtChr->indexLayerStops[crtChr->currentLayer] - crtLayerIndices, 
+								GL_UNSIGNED_INT, 0, crtLayerIndices);
+	glUniform3f(colLoc, otherLayersColor.x, otherLayersColor.y, otherLayersColor.z);
+
+	if(topDown)
+		glDrawElementsBaseVertex(GL_TRIANGLES, crtChr->indexLayerStops[crtChr->currentLayer - 1], GL_UNSIGNED_INT, 0, 0);
+	else
+		glDrawElementsBaseVertex(GL_TRIANGLES, crtChr->indexLayerStops[crtChr->indexLayerStops.size() - 1] - crtChr->indexLayerStops[crtChr->currentLayer],
+									GL_UNSIGNED_INT, 0, crtChr->indexLayerStops[crtChr->currentLayer]);
+
 	glDisable(GL_CULL_FACE);
 }
 
@@ -376,4 +388,7 @@ void MeshVoxelizer::Update(float deltaTimeSeconds)
 	
 }
 
-void MeshVoxelizer::FrameEnd() {}
+void MeshVoxelizer::FrameEnd() {
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}

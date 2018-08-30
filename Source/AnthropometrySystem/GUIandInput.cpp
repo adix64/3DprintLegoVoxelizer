@@ -29,6 +29,7 @@ void MeshVoxelizer::RenderImGUI()
 	ImGui::SetNextWindowPos(ImVec2(200, 200), ImGuiSetCond_FirstUseEver);
 	//ImGui::PushStyleColor(ImGuiCol_Border, ImColor(255, 100, 100));
 	ImGui::Begin("", &xt,ImVec2(600,600));
+	ImGui::Text("_______MODEL_______");
 
 	ImGui::Text(crtChr->mName.c_str());
 	
@@ -43,11 +44,12 @@ void MeshVoxelizer::RenderImGUI()
 		crtChrIDX = (crtChrIDX + 1) % mCharacters.size();
 		crtChr = mCharacters[crtChrIDX];
 	}
-	ImGui::Text("_____________________");
-
-
-	ImGui::Text("Options:");
 	ImGui::Checkbox("Display Voxelized", &showVoxels);
+
+	ImGui::Text("________LAYERS________");
+	char crtLyrTxt[128];
+	sprintf(crtLyrTxt, "Current Layer: %d", crtChr->currentLayer);
+	ImGui::Text(crtLyrTxt);
 	if (ImGui::Button("Level++"))
 	{
 		crtChr->currentLayer = min(crtChr->Yvoxels.size() - 1, (size_t)crtChr->currentLayer + 1);
@@ -66,14 +68,14 @@ void MeshVoxelizer::RenderImGUI()
 	}
 	if (ImGui::Button("Level--"))
 	{
-		crtChr->currentLayer = max((size_t)1, (size_t)crtChr->currentLayer - 1);
+		crtChr->currentLayer = max(0, crtChr->currentLayer - 1);
 	}
 	else
 	{
 		if (ImGui::IsItemActive())
 		{
 			if (lastLayerDecrementTime >= .5)
-				crtChr->currentLayer = max((size_t)1, (size_t)crtChr->currentLayer - 1);
+				crtChr->currentLayer = max(0, crtChr->currentLayer - 1);
 			lastLayerDecrementTime = min(lastLayerDecrementTime + m_deltaTime, 1.f);
 		}
 		else
@@ -81,20 +83,27 @@ void MeshVoxelizer::RenderImGUI()
 			lastLayerDecrementTime = 0;
 		}
 	}
-	ImGui::Text("_____________________");
 
-	if (ImGui::Button("Resolution++"))
+	ImGui::ColorEdit3("Active Layer", &activeLayerColor[0]);
+	ImGui::ColorEdit3("Other Layers", &otherLayersColor[0]);
+
+	ImGui::Text("___RESOLUTION___");
+
+	if (ImGui::Button("++"))
+	{
+		crtChr->voxResolution -= 0.25f;
+		VoxelizeBodyModel(crtChr->voxResolution);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("--"))
 	{
 		crtChr->voxResolution += 0.25f;
 		VoxelizeBodyModel(crtChr->voxResolution);
 	}
 
-	if (ImGui::Button("Resolution--"))
-	{
-		crtChr->voxResolution -= 0.25f;
-		VoxelizeBodyModel(crtChr->voxResolution);
-	}
 
+	ImGui::Text("_____BUILD_MODE_____");
+	ImGui::Checkbox("TopDown", &topDown);
 	ImGui::End();
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	ImGui::Render();
@@ -196,7 +205,9 @@ void MeshVoxelizer::OnKeyPress(int key, int mods)
 
 	if (key == GLFW_KEY_4)
 		drawBodyWireframe = !drawBodyWireframe;
-
+	else
+		if (key == GLFW_KEY_H)
+			bottomOffset+= cubeMesh->indices.size();
 	else if (key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT)
 	{
 		glfwSetInputMode(window->GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);

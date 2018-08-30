@@ -2,7 +2,7 @@
  
 uniform sampler2D texture1;
 uniform sampler2D texture2;
-uniform vec3 color;
+uniform vec3 uColor;
 uniform int mode;
 uniform int invertColor;
 uniform vec3 eye_pos;
@@ -34,8 +34,11 @@ void main()
 	fresnel = 2 - fresnel;
 	vec4 reflectionColor = texture(cubeMap, reflect(V, N));
 
-	out_color = vec4(((lambert1 + specular1) * vec3(1,0.6,0.5) * 0.75 +
-					  (lambert2 + specular2) * vec3(0.7,1,1)* 0.75)
+	out_color = vec4((
+						(lambert1 + specular1) * vec3(1,0.6,0.5) 
+						+
+					  	(lambert2 + specular2) * vec3(0.7,1,1)
+					  	)
 			   		 * vcolor * fresnel, 1);	
 	// out_color = 0.7 * out_color + 0.3 * reflectionColor;
 	float x = gl_FragCoord.z;
@@ -44,5 +47,7 @@ void main()
 
 	out_color.rg *= 1 - x;
 	out_color = mix(out_color, reflectionColor, 0.1);
+	out_color.xyz *= uColor;
+	out_color.xyz = (out_color.xyz - vec3(0.2)) * 1.6 + vec3(0.2);
 	// out_color += vec4(x);
 }

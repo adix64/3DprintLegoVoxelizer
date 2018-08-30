@@ -57,6 +57,7 @@ struct MeasureableCharacter
 	std::vector<DebugLine> debugLines;
 	int currentLayer = 1;
 	float voxResolution = .5f;
+	
 };
 
 class MeshVoxelizer : public SimpleScene
@@ -158,6 +159,11 @@ private:
 	float lastLayerIncrementTime = 0;
 	float lastLayerDecrementTime = 0;
 	GLuint environCubeMap;
+	
+	int bottomOffset = 0;
+	glm::vec3 activeLayerColor, otherLayersColor;
+	bool topDown = false;
+
 };
 
 
@@ -168,5 +174,5 @@ int FurthestPointAlongDir(std::unordered_map<int, glm::vec3> &verts, glm::vec3 &
 int IDofClosestCentroidToPoint(std::unordered_map<int, glm::vec3> &centroids, glm::vec3 pPoint, float thresh = 99999.f);
 
 
-#define GUI_FRACTION 10
+#define GUI_FRACTION 100
 #define mPI 3.1415926f
